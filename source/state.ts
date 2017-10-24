@@ -267,9 +267,12 @@ export abstract class State {
                 return Object.assign(parent, value);
              },
              (parent: any, _: any, value: K) => {
-               for (const k of Object.keys(value)) {
-                 parent[k] = (value as any)[k];
+               if(value != null) {
+                   for (const k of Object.keys(value)) {
+                       parent[k] = (value as any)[k];
+                   }
                }
+
                return parent;
              },
              () => Object.assign({}, object)
