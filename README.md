@@ -1,3 +1,7 @@
+# ****REPO DEPRECATED****
+
+Please note that this repo has been deprecated. Code and issues are being migrated to a monorepo at https://github.com/angular-redux/platform where we are beginning work on a new and improved v10. To file any new issues or see the state of the current code base, we would love to see you there! Thanks for your support!
+
 ## @angular-redux/form
 
 [![Join the chat at https://gitter.im/angular-redux/ng2-redux](https://badges.gitter.im/angular-redux/ng2-redux.svg)](https://gitter.im/angular-redux/ng2-redux?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -11,7 +15,7 @@ your forms elements. It builds on existing Angular functionality like
 and
 [NgControl](https://angular.io/docs/ts/latest/api/forms/index/NgControl-class.html)
 
-This supports both [Template driven forms](https://angular.io/guide/forms) and [Reactive driven forms](https://angular.io/guide/reactive-forms). 
+This supports both [Template driven forms](https://angular.io/guide/forms) and [Reactive driven forms](https://angular.io/guide/reactive-forms).
 
 #### Template Driven
 

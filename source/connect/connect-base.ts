@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 
 import { Unsubscribe } from 'redux';
 
-import 'rxjs/add/operator/debounceTime';
+import { debounceTime } from 'rxjs/operators';
 
 import { FormStore } from '../form-store';
 import { State } from '../state';
@@ -24,11 +24,11 @@ export interface ControlPair {
 
 export class ConnectBase {
 
-  @Input('connect') connect: () => (string | number) | Array<string | number>;
-  private stateSubscription: Unsubscribe;
+  @Input('connect') connect?: () => (string | number) | Array<string | number>;
+  private stateSubscription?: Unsubscribe;
 
-  private formSubscription: Subscription;
-  protected store: FormStore;
+  private formSubscription?: Subscription;
+  protected store?: FormStore;
   protected form: any;
 
   public get path(): Array<string> {
@@ -65,11 +65,13 @@ export class ConnectBase {
     Promise.resolve().then(() => {
       this.resetState();
 
-      this.stateSubscription = this.store.subscribe(() => this.resetState());
+      if (this.store) {
+        this.stateSubscription = this.store.subscribe(() => this.resetState());
+      }
 
       Promise.resolve().then(() => {
         this.formSubscription = (<any>this.form.valueChanges)
-          .debounceTime(0)
+          .pipe(debounceTime(0))
           .subscribe((values: any) => this.publish(values));
       });
     });
@@ -97,7 +99,10 @@ export class ConnectBase {
       throw new Error(`Unknown type of form element: ${formElement.constructor.name}`);
     }
 
-    return pairs.filter(p => (<any>p.control)._parent === this.form.control);
+    return pairs.filter(p => {
+        const parent = (p.control as any)._parent;
+        return parent === this.form.control || parent === this.form;
+    });
   }
 
   private resetState() {
@@ -114,21 +119,23 @@ export class ConnectBase {
     children.forEach(c => {
       const { path, control } = c;
 
-      const value = State.get(this.getState(), this.path.concat(c.path));
+      const value = State.get(this.getState(), this.path.concat(path));
 
       if (control.value !== value) {
-        const phonyControl = <any>{ path: path };
-
-        this.form.updateModel(phonyControl, value);
+        control.setValue(value);
       }
     });
   }
 
   private publish(value: any) {
-    this.store.valueChanged(this.path, this.form, value);
+    if (this.store) {
+      this.store.valueChanged(this.path, this.form, value);
+    }
   }
 
   private getState() {
-    return this.store.getState();
+    if (this.store) {
+      return this.store.getState();
+    }
   }
 }
